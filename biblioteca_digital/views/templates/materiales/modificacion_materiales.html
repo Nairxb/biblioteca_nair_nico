@@ -379,43 +379,40 @@
 </div>
 
 <!-- Modal de Detalles del Libro -->
+<!-- Modal de Detalles del Material -->
 <div class="modal fade" id="modaldetallelibro" tabindex="-1" aria-labelledby="modaldetallelibroLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modaldetallelibroLabel">Detalles del Libro</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title" id="modaldetallelibroLabel">Detalles del Material: <span id="modal-numero-material"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">×</button>
             </div>
             <div class="modal-body">
                 <div class="detalles-container">
+                    <!-- Descripción -->
                     <div class="detalle-seccion">
-                        <h6 class="mb-3">Título</h6>
-                        <div class="detalle-contenido mb-4" id="modal-titulo"></div>
+                        <h6>Descripción</h6>
+                        <div class="detalle-contenido" id="modal-descripcion">
+                            Sin descripción disponible
+                        </div>
                     </div>
                     
+                    <!-- Observaciones -->
                     <div class="detalle-seccion">
-                        <h6 class="mb-3">Autor</h6>
-                        <div class="detalle-contenido mb-4" id="modal-autor"></div>
+                        <h6>Observaciones</h6>
+                        <div class="detalle-contenido" id="modal-observaciones">
+                            Sin observaciones
+                        </div>
                     </div>
                     
+                    <!-- Etiquetas / Palabras clave -->
                     <div class="detalle-seccion">
-                        <h6 class="mb-3">Editorial</h6>
-                        <div class="detalle-contenido mb-4" id="modal-editorial"></div>
-                    </div>
-                    
-                    <div class="detalle-seccion">
-                        <h6 class="mb-3">Descripción</h6>
-                        <div class="detalle-contenido mb-4" id="modal-descripcion"></div>
-                    </div>
-                    
-                    <div class="detalle-seccion">
-                        <h6 class="mb-3">Palabras clave</h6>
-                        <div class="detalle-contenido" id="modal-palabras-clave"></div>
+                        <h6>Etiquetas / Palabras clave</h6>
+                        <div class="detalle-contenido" id="modal-palabras-clave">
+                            Sin etiquetas disponibles
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
@@ -448,5 +445,5 @@ function mostrarDetalleLibroData(button) {
 {% endblock %}
 
 {% block modals %}
-  <!-- Los modals adicionales van aquí si los necesitas -->
+    {% include 'modals/detalles_libro.html' %}
 {% endblock %}

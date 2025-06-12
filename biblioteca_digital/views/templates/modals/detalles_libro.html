@@ -2,65 +2,196 @@
 <link rel="stylesheet" href="{% static 'css/modals/modal_confirmacion_material.css' %}">
 
 <style>
-    .detalles-container {
-        padding: 20px;
+    /* Estilos específicos solo para el modal de detalles */
+    #modaldetallelibro .modal-content {
+        border: none !important;
+        border-radius: 15px !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
     }
 
-    .detalle-seccion {
-        margin-bottom: 25px;
+    #modaldetallelibro .modal-header {
+        background: linear-gradient(135deg, #8B5A9F, #A569BD) !important;
+        color: white !important;
+        border-radius: 15px 15px 0 0 !important;
+        padding: 20px 25px !important;
+        border: none !important;
     }
 
-    .detalle-seccion h6 {
-        color: #2c3e50;
-        font-weight: 600;
-        font-size: 1.1em;
-        border-bottom: 2px solid #3498db;
-        padding-bottom: 8px;
-        display: inline-block;
+    #modaldetallelibro .modal-title {
+        font-size: 1.4em !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+        color: white !important;
     }
 
-    .detalle-contenido {
-        color: #34495e;
-        line-height: 1.6;
-        font-size: 1em;
-        background-color: #f8f9fa;
-        padding: 15px;
-        border-radius: 8px;
-        border: 1px solid #e9ecef;
+    #modaldetallelibro .btn-close {
+        background: none !important;
+        border: none !important;
+        color: white !important;
+        font-size: 24px !important;
+        opacity: 0.8 !important;
+        transition: opacity 0.2s !important;
+        filter: invert(1) !important;
+    }
+
+    #modaldetallelibro .btn-close:hover {
+        opacity: 1 !important;
+        color: white !important;
+    }
+
+    #modaldetallelibro .modal-body {
+        padding: 0 !important;
+        background-color: #f8f9fa !important;
+    }
+
+    #modaldetallelibro .detalles-container {
+        padding: 25px !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr 1fr !important;
+        gap: 25px !important;
+        margin: 0 !important;
+    }
+
+    #modaldetallelibro .detalle-seccion {
+        background: white !important;
+        border-radius: 12px !important;
+        padding: 20px !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+        border: 1px solid #e9ecef !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+        margin-bottom: 0 !important;
+    }
+
+    #modaldetallelibro .detalle-seccion:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.12) !important;
+    }
+
+    #modaldetallelibro .detalle-seccion h6 {
+        color: #8B5A9F !important;
+        font-weight: 700 !important;
+        font-size: 0.95em !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        margin-bottom: 12px !important;
+        padding-bottom: 8px !important;
+        border-bottom: 2px solid #A569BD !important;
+        display: block !important;
+    }
+
+    #modaldetallelibro .detalle-contenido {
+        color: #2c3e50 !important;
+        line-height: 1.6 !important;
+        font-size: 0.95em !important;
+        margin: 0 !important;
+        word-wrap: break-word !important;
+        max-height: 120px !important;
+        overflow-y: auto !important;
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+    }
+
+    #modaldetallelibro .detalle-contenido::-webkit-scrollbar {
+        width: 4px !important;
+    }
+
+    #modaldetallelibro .detalle-contenido::-webkit-scrollbar-track {
+        background: #f1f1f1 !important;
+        border-radius: 2px !important;
+    }
+
+    #modaldetallelibro .detalle-contenido::-webkit-scrollbar-thumb {
+        background: #A569BD !important;
+        border-radius: 2px !important;
+    }
+
+    /* Responsive para tablet */
+    @media (max-width: 992px) {
+        #modaldetallelibro .detalles-container {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 20px !important;
+            padding: 20px !important;
+        }
+    }
+
+    /* Responsive para móvil */
+    @media (max-width: 576px) {
+        #modaldetallelibro .detalles-container {
+            grid-template-columns: 1fr !important;
+            gap: 15px !important;
+            padding: 15px !important;
+        }
+        
+        #modaldetallelibro .modal-title {
+            font-size: 1.2em !important;
+        }
+        
+        #modaldetallelibro .detalle-seccion {
+            padding: 15px !important;
+        }
     }
 </style>
 
-<!-- Modal de Confirmación de Alta de Material -->
+<!-- Modal de Detalles del Material -->
 <div class="modal fade" id="modaldetallelibro" tabindex="-1" aria-labelledby="modaldetallelibroLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalConfirmacionLabel">Detalles del Libro</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+                <h5 class="modal-title" id="modaldetallelibroLabel">Detalles del Material: <span id="modal-numero-material"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">×</button>
+            </div><<<<
             <div class="modal-body">
-                <!-- Aquí se mostrarán los detalles del libro -->
                 <div class="detalles-container">
+                    <!-- Descripción -->
                     <div class="detalle-seccion">
-                        <h6 class="mb-3">Descripción</h6>
-                        <div class="detalle-contenido mb-4">{{ libro.descripcion|default:"Sin descripción"|linebreaks }}</div>
+                        <h6>Descripción</h6>
+                        <div class="detalle-contenido" id="modal-descripcion">
+                            Sin descripción disponible
+                        </div>
                     </div>
                     
+                    <!-- Observaciones -->
                     <div class="detalle-seccion">
-                        <h6 class="mb-3">Observaciones</h6>
-                        <div class="detalle-contenido mb-4">{{ libro.observaciones|default:"Sin observaciones"|linebreaks }}</div>
+                        <h6>Observaciones</h6>
+                        <div class="detalle-contenido" id="modal-observaciones">
+                            Sin observaciones
+                        </div>
                     </div>
                     
+                    <!-- Etiquetas / Palabras clave -->
                     <div class="detalle-seccion">
-                        <h6 class="mb-3">Etiquetas / Palabras clave</h6>
-                        <div class="detalle-contenido">{{ libro.etiquetas|default:"Sin etiquetas" }}</div>
+                        <h6>Etiquetas / Palabras clave</h6>
+                        <div class="detalle-contenido" id="modal-palabras-clave">
+                            Sin etiquetas disponibles
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
             </div>
         </div>
     </div>
 </div>
-<script
- const form = document.getElementById('form_alta_material');
+
+<script>
+function mostrarDetalleLibroData(button) {
+    // Obtener datos del botón
+    const id = button.getAttribute('data-libro-id');
+    const titulo = button.getAttribute('data-libro-titulo');
+    const descripcion = button.getAttribute('data-libro-descripcion');
+    const palabrasClave = button.getAttribute('data-libro-palabras');
+    
+    // Crear número del material (puedes ajustar este formato según necesites)
+    const numeroMaterial = `${id || 'N/A'}`;
+    
+    // Llenar el modal
+    document.getElementById('modal-numero-material').textContent = numeroMaterial;
+    document.getElementById('modal-descripcion').textContent = descripcion || 'Sin descripción disponible';
+    document.getElementById('modal-observaciones').textContent = 'Sin observaciones'; // Este campo no existe en tu modelo Libro
+    document.getElementById('modal-palabras-clave').textContent = palabrasClave || 'Sin etiquetas disponibles';
+    
+    // Mostrar el modal
+    var modal = new bootstrap.Modal(document.getElementById('modaldetallelibro'));
+    modal.show();
+}
+</script>
