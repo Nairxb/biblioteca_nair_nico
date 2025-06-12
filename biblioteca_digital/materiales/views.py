@@ -839,7 +839,137 @@ def guardar_material_ajax(request):
     return JsonResponse({'success': False, 'error': 'Tipo de material no soportado'})
 
 def modificacion_materiales(request):
-    return render(request, 'materiales/modificacion_materiales.html')
+    # Obtener parámetros de búsqueda
+    query = request.GET.get('q', '')
+    tipo_material = request.GET.get('tipo_material', 'libro')  # Por defecto libro
+    mostrar_no_disponibles = request.GET.get('mostrar_no_disponibles', False)
+    
+    # Inicializar variables
+    materiales = []
+    
+    # Filtrar según el tipo de material seleccionado
+    if tipo_material == 'libro':
+        if mostrar_no_disponibles:
+            libros = Libro.objects.all()
+        else:
+            libros = Libro.objects.filter(estado='Disponible')
+        
+        if query:
+            libros = libros.filter(
+                Q(titulo__icontains=query) | 
+                Q(autor__icontains=query) | 
+                Q(editorial__icontains=query) |
+                Q(codigo_materia__icontains=query)
+            )
+        materiales = libros
+        
+    elif tipo_material == 'mapa':
+        if mostrar_no_disponibles:
+            mapas = Mapas.objects.all()
+        else:
+            mapas = Mapas.objects.filter(estado='Disponible')
+        
+        if query:
+            mapas = mapas.filter(
+                Q(tipo__icontains=query) | 
+                Q(descripcion__icontains=query)
+            )
+        materiales = mapas
+        
+    elif tipo_material == 'multimedia':
+        if mostrar_no_disponibles:
+            multimedia = Multimedia.objects.all()
+        else:
+            multimedia = Multimedia.objects.filter(estado='Disponible')
+        
+        if query:
+            multimedia = multimedia.filter(
+                Q(materia__icontains=query) | 
+                Q(contenido__icontains=query)
+            )
+        materiales = multimedia
+        
+    elif tipo_material == 'notebook':
+        if mostrar_no_disponibles:
+            notebooks = Notebook.objects.all()
+        else:
+            notebooks = Notebook.objects.filter(estado='Disponible')
+        
+        if query:
+            notebooks = notebooks.filter(
+                Q(marca_not__icontains=query) | 
+                Q(modelo_not__icontains=query)
+            )
+        materiales = notebooks
+        
+    elif tipo_material == 'proyector':
+        if mostrar_no_disponibles:
+            proyectores = Proyector.objects.all()
+        else:
+            proyectores = Proyector.objects.filter(estado='Disponible')
+        
+        if query:
+            proyectores = proyectores.filter(
+                Q(marca_pro__icontains=query) | 
+                Q(modelo_pro__icontains=query)
+            )
+        materiales = proyectores
+        
+    elif tipo_material == 'varios':
+        if mostrar_no_disponibles:
+            varios = Varios.objects.all()
+        else:
+            varios = Varios.objects.filter(estado='Disponible')
+        
+        if query:
+            varios = varios.filter(Q(tipo__icontains=query))
+        materiales = varios
+    
+    # Contexto para el template
+    context = {
+        'materiales': materiales,
+        'tipo_material': tipo_material,
+        'query': query,
+        'mostrar_no_disponibles': mostrar_no_disponibles,
+        # Mantener compatibilidad con el template actual
+        'libros': materiales if tipo_material == 'libro' else [],
+    }
+    
+    return render(request, 'materiales/modificacion_materiales.html', context)
+
+# En tu views.py, agrega esta nueva función:
+
+@csrf_exempt
+def obtener_detalle_libro(request, libro_id):
+    """
+    Vista AJAX para obtener los detalles de un libro específico
+    """
+    if request.method == 'GET':
+        try:
+            libro = get_object_or_404(Libro, id=libro_id)
+            data = {
+                'success': True,
+                'libro': {
+                    'id': libro.id,
+                    'titulo': libro.titulo,
+                    'autor': libro.autor,
+                    'editorial': libro.editorial,
+                    'descripcion': libro.descripcion or 'Sin descripción',
+                    'palabras_clave': libro.palabras_clave or 'Sin palabras clave',
+                    'clasificacion_cdu': libro.clasificacion_cdu or '',
+                    'siglas_autor_titulo': libro.siglas_autor_titulo or '',
+                    'estado': libro.estado,
+                    'imagen_url': libro.imagen.url if libro.imagen else None,
+                }
+            }
+            return JsonResponse(data)
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    return JsonResponse({'success': False, 'error': 'Método no permitido'})
+
+def modificacion_materiales(request):
+    return render(request, 'materiales/modificacion_materiales.html', {'libros': Libro.objects.all()})
 
 def prestamos(request):
     return render(request, 'materiales/prestamos.html')

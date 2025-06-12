@@ -4,6 +4,7 @@
 {% block extra_styles %}
 <link rel="stylesheet" href="{% static 'css/modificacion_material.css' %}">
 <link rel="stylesheet" href="{% static 'css/style_form.css' %}">
+<link rel="stylesheet" href="{% static 'css/modals/modal_confirmacion_material.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -198,6 +199,34 @@
         font-style: italic;
     }
 
+    /* Estilos para el modal de detalles */
+    .detalles-container {
+        padding: 20px;
+    }
+
+    .detalle-seccion {
+        margin-bottom: 25px;
+    }
+
+    .detalle-seccion h6 {
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 1.1em;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 8px;
+        display: inline-block;
+    }
+
+    .detalle-contenido {
+        color: #34495e;
+        line-height: 1.6;
+        font-size: 1em;
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    }
+
     /* Responsive Design */
     @media screen and (max-width: 1024px) {
         .libros-table {
@@ -276,14 +305,7 @@
 </div>
 
  <!-- Tabla para mostrar los libros -->
- <div class="tabla-container mt-4git reset HEAD materiales/migrations/0001_initial.py materiales/migrations/0002_inventario_delete_autor_delete_libros_libro_mapas_and_more.py materiales/migrations/0003_remove_libro_cdu_libro_codigo_materia_and_more.py materiales/migrations/0004_libro_edicion.py materiales/migrations/0005_inventario_imagen_rota.py materiales/migrations/0006_alter_inventario_estado.py materiales/migrations/0007_alter_mapas_id_mapa_alter_multimedia_id_multi_and_more.py
- git add materiales/migrations/0001_initial.py
- git commit -m "chore: limpieza y actualización de migraciones de materiales
- 
- - Eliminación de migraciones antiguas innecesarias
- - Actualización de la migración inicial para reflejar el nuevo estado del modelo
- 
- BREAKING CHANGE: Es necesario revisar la base de datos antes de desplegar en producción."">
+ <div class="tabla-container mt-4">
     <table class="libros-table">
         <thead>
             <tr>
@@ -307,7 +329,7 @@
                     <td class="titulo-cell">{{ libro.titulo }}</td>
                     <td>{{ libro.autor }}</td>
                     <td>{{ libro.editorial }}</td>
-                    <td class="text-center">{{ libro.codigo_materia }}</td>
+                    <td class="text-center">{{ libro.clasificacion_cdu|default:'' }}</td>
                     <td class="text-center">{{ libro.siglas_autor_titulo }}</td>
                     <td class="text-center">LA PLATA</td>
                     <td class="disponibilidad-cell">
@@ -318,16 +340,23 @@
                         {% endif %}
                     </td>
                     <td class="imagen-cell">
-                        {% if libro.img %}
-                            <img src="{{ libro.img.url }}" alt="{{ libro.titulo }}" class="libro-thumbnail">
+                        {% if libro.imagen %}
+                            <img src="{{ libro.imagen.url }}" alt="{{ libro.titulo }}" class="libro-thumbnail">
                         {% else %}
                             <img src="https://via.placeholder.com/50x70/95a5a6/ffffff?text=Sin+Imagen" alt="{{ libro.titulo }}" class="libro-thumbnail">
                         {% endif %}
                     </td>
                     <td class="acciones-cell">
-                        <button class="btn-icon btn-detalle" title="Ver detalles">
-                            <i class="icon-detalle">📋</i>
-                        </button>
+                        <button class="btn-icon btn-detalle" title="Ver detalles" 
+                            data-libro-id="{{ libro.id }}"
+                            data-libro-titulo="{{ libro.titulo }}"
+                            data-libro-autor="{{ libro.autor }}"
+                            data-libro-editorial="{{ libro.editorial }}"
+                            data-libro-descripcion="{{ libro.descripcion|default:"Sin descripción" }}"
+                            data-libro-palabras="{{ libro.palabras_clave|default:"Sin palabras clave" }}"
+                            onclick="mostrarDetalleLibroData(this)">
+                        <i class="icon-detalle">📋</i>
+                    </button>
                         <button class="btn-icon btn-editar" title="Editar">
                             <i class="icon-editar">✏️</i>
                         </button>
@@ -348,9 +377,76 @@
         </tbody>
     </table>
 </div>
+
+<!-- Modal de Detalles del Libro -->
+<div class="modal fade" id="modaldetallelibro" tabindex="-1" aria-labelledby="modaldetallelibroLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modaldetallelibroLabel">Detalles del Libro</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="detalles-container">
+                    <div class="detalle-seccion">
+                        <h6 class="mb-3">Título</h6>
+                        <div class="detalle-contenido mb-4" id="modal-titulo"></div>
+                    </div>
+                    
+                    <div class="detalle-seccion">
+                        <h6 class="mb-3">Autor</h6>
+                        <div class="detalle-contenido mb-4" id="modal-autor"></div>
+                    </div>
+                    
+                    <div class="detalle-seccion">
+                        <h6 class="mb-3">Editorial</h6>
+                        <div class="detalle-contenido mb-4" id="modal-editorial"></div>
+                    </div>
+                    
+                    <div class="detalle-seccion">
+                        <h6 class="mb-3">Descripción</h6>
+                        <div class="detalle-contenido mb-4" id="modal-descripcion"></div>
+                    </div>
+                    
+                    <div class="detalle-seccion">
+                        <h6 class="mb-3">Palabras clave</h6>
+                        <div class="detalle-contenido" id="modal-palabras-clave"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function mostrarDetalleLibroData(button) {
+    // Obtener datos del botón
+    const id = button.getAttribute('data-libro-id');
+    const titulo = button.getAttribute('data-libro-titulo');
+    const autor = button.getAttribute('data-libro-autor');
+    const editorial = button.getAttribute('data-libro-editorial');
+    const descripcion = button.getAttribute('data-libro-descripcion');
+    const palabrasClave = button.getAttribute('data-libro-palabras');
+    
+    // Llenar el modal
+    document.getElementById('modal-titulo').textContent = titulo || 'Sin título';
+    document.getElementById('modal-autor').textContent = autor || 'Sin autor';
+    document.getElementById('modal-editorial').textContent = editorial || 'Sin editorial';
+    document.getElementById('modal-descripcion').textContent = descripcion || 'Sin descripción';
+    document.getElementById('modal-palabras-clave').textContent = palabrasClave || 'Sin palabras clave';
+    
+    // Mostrar el modal
+    var modal = new bootstrap.Modal(document.getElementById('modaldetallelibro'));
+    modal.show();
+}
+</script>
+
 </div>
 {% endblock %}
 
 {% block modals %}
-  {% include 'modals/detalles_material.html' %}
+  <!-- Los modals adicionales van aquí si los necesitas -->
 {% endblock %}

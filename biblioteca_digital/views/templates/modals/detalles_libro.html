@@ -1,0 +1,66 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/modals/modal_confirmacion_material.css' %}">
+
+<style>
+    .detalles-container {
+        padding: 20px;
+    }
+
+    .detalle-seccion {
+        margin-bottom: 25px;
+    }
+
+    .detalle-seccion h6 {
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 1.1em;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 8px;
+        display: inline-block;
+    }
+
+    .detalle-contenido {
+        color: #34495e;
+        line-height: 1.6;
+        font-size: 1em;
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    }
+</style>
+
+<!-- Modal de Confirmación de Alta de Material -->
+<div class="modal fade" id="modaldetallelibro" tabindex="-1" aria-labelledby="modaldetallelibroLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalConfirmacionLabel">Detalles del Libro</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Aquí se mostrarán los detalles del libro -->
+                <div class="detalles-container">
+                    <div class="detalle-seccion">
+                        <h6 class="mb-3">Descripción</h6>
+                        <div class="detalle-contenido mb-4">{{ libro.descripcion|default:"Sin descripción"|linebreaks }}</div>
+                    </div>
+                    
+                    <div class="detalle-seccion">
+                        <h6 class="mb-3">Observaciones</h6>
+                        <div class="detalle-contenido mb-4">{{ libro.observaciones|default:"Sin observaciones"|linebreaks }}</div>
+                    </div>
+                    
+                    <div class="detalle-seccion">
+                        <h6 class="mb-3">Etiquetas / Palabras clave</h6>
+                        <div class="detalle-contenido">{{ libro.etiquetas|default:"Sin etiquetas" }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+<script
+ const form = document.getElementById('form_alta_material');
